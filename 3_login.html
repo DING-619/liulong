@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Login + User Page</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            padding: 40px;
+            margin: 0;
+        }
+        /* 页面容器，默认隐藏 */
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+
+        /* 登录页样式 */
+        .login-wrap {
+            max-width: 350px;
+            margin: 80px auto;
+            text-align: center;
+        }
+        .login-wrap h1 {
+            color: #333;
+            margin-bottom: 6px;
+        }
+        .sub-text {
+            color: #666;
+            margin-bottom: 35px;
+        }
+        .login-wrap input {
+            display: block;
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            padding: 12px 6px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            outline: none;
+        }
+        .login-btn {
+            border: 2px solid #e83e8c;
+            color: #e83e8c;
+            background: transparent;
+            padding: 11px 32px;
+            font-size: 16px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 20px 0 30px;
+        }
+        .register-text {
+            color: #666;
+        }
+        .register-link {
+            color: #e83e8c;
+            cursor: pointer;
+        }
+
+        /* 用户列表页样式（你之前作业界面） */
+        .form-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        input.table-inp {
+            padding: 8px 10px;
+            font-size: 16px;
+            width: 160px;
+        }
+        button.add-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 750px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+        button.del-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 页面1：登录页 -->
+<div id="page-login" class="page active">
+    <div class="login-wrap">
+        <h1>Welcome</h1>
+        <div class="sub-text">Login to get started!</div>
+        <input type="email" id="login-email" placeholder="Email">
+        <input type="password" id="login-pass" placeholder="Password">
+        <button class="login-btn" id="btn-login">Login</button>
+        <div class="register-text">First time here? <span class="register-link">Create your account.</span></div>
+    </div>
+</div>
+
+<!-- 页面2：用户管理页（你之前作业页面） -->
+<div id="page-user" class="page">
+    <div class="form-row">
+        <button class="add-btn" id="addUserBtn">Add User</button>
+        <input class="table-inp" type="text" id="firstName" placeholder="FirstName">
+        <input class="table-inp" type="text" id="lastName" placeholder="LastName">
+        <input class="table-inp" type="email" id="email" placeholder="Email">
+    </div>
+
+    <h2>Users</h2>
+    <table id="usersTable">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-id="1">
+                <td>1</td>
+                <td>John</td>
+                <td>Doe</td>
+                <td>john@gmail.com</td>
+                <td><button class="del-btn">Delete</button></td>
+            </tr>
+            <tr data-id="2">
+                <td>2</td>
+                <td>Dhiraj</td>
+                <td>Ray</td>
+                <td>only2dhir@gmail.com</td>
+                <td><button class="del-btn">Delete</button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+// 1. 预设账号数据（题目要求：объект с аккаунтами）
+const userAccounts = [
+    { email: "test@gmail.com", password: "123456" },
+    { email: "admin@gmail.com", password: "123456" }
+];
+
+// 页面切换函数
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+}
+
+// 登录逻辑
+const btnLogin = document.getElementById('btn-login');
+btnLogin.addEventListener('click', () => {
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-pass').value.trim();
+
+    // 校验账号密码
+    const validUser = userAccounts.find(u => u.email === email && u.password === pass);
+    if (validUser) {
+        // 登录成功，跳转到用户页面
+        showPage('page-user');
+    } else {
+        alert('Неверный email или пароль');
+    }
+});
+
+// ========== 用户列表增删逻辑（原有功能保留）==========
+let nextId = 3;
+const tableBody = document.querySelector('#usersTable tbody');
+const addBtn = document.getElementById('addUserBtn');
+const firstNameInp = document.getElementById('firstName');
+const lastNameInp = document.getElementById('lastName');
+const emailInp = document.getElementById('email');
+
+// 添加用户
+addBtn.addEventListener('click', () => {
+    const fName = firstNameInp.value.trim();
+    const lName = lastNameInp.value.trim();
+    const mail = emailInp.value.trim();
+    if (!fName || !lName || !mail) return;
+
+    const row = document.createElement('tr');
+    row.dataset.id = nextId;
+    row.innerHTML = `
+        <td>${nextId}</td>
+        <td>${fName}</td>
+        <td>${lName}</td>
+        <td>${mail}</td>
+        <td><button class="del-btn">Delete</button></td>
+    `;
+    tableBody.appendChild(row);
+
+    firstNameInp.value = '';
+    lastNameInp.value = '';
+    emailInp.value = '';
+    nextId++;
+});
+
+// 删除用户
+tableBody.addEventListener('click', (e) => {
+    if (e.target.classList.contains('del-btn')) {
+        e.target.closest('tr').remove();
+    }
+});
+</script>
+</body>
+</html>
